@@ -1,0 +1,12 @@
+# Ignore real properties file (has passwords/secrets)
+src/main/resources/application.properties
+
+# Maven build output
+target/
+
+# IntelliJ
+.idea/
+*.iml
+
+# OS files
+.DS_Store

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StaySwift - Login</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* ── Full-screen background ── */
+        .login-page {
+            min-height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-bg {
+            position: fixed;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=2400&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+        }
+
+        .login-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(26,26,26,0.75) 0%, rgba(58,46,42,0.80) 100%);
+            z-index: 1;
+        }
+
+        /* ── Brand header on top ── */
+        .login-brand {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            padding: 20px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(26,26,26,0.25);
+            backdrop-filter: blur(6px);
+            border-bottom: 1px solid rgba(245,240,232,0.08);
+        }
+
+        .login-brand a.brand-name {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 26px;
+            color: var(--cream);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-decoration: none;
+        }
+
+        .login-brand a.back-link {
+            font-size: 13px;
+            color: rgba(245,240,232,0.6);
+            text-decoration: none;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+
+        .login-brand a.back-link:hover { color: var(--gold); }
+
+        /* ── Card override for dark bg ── */
+        .login-page .container {
+            position: relative;
+            z-index: 5;
+            margin: 0;
+            padding: 20px;
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .login-page .card {
+            background: rgba(245, 240, 232, 0.97);
+            border: none;
+            border-radius: 2px;
+            padding: 40px 38px;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+            margin: 0;
+            max-width: 100%;
+        }
+
+        .login-page .card h2 {
+            font-size: 32px;
+            color: var(--brown);
+            margin-bottom: 6px;
+        }
+
+        .login-page .card .subtitle {
+            font-size: 13px;
+            color: var(--brown-soft);
+            margin-bottom: 24px;
+            margin-top: 0;
+        }
+
+        .login-page .card input,
+        .login-page .card select {
+            width: 100%;
+            padding: 11px 14px;
+            margin: 7px 0;
+            border: 1px solid rgba(58,46,42,0.18);
+            background: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: var(--brown);
+            outline: none;
+            transition: border-color 0.2s;
+            box-sizing: border-box;
+        }
+
+        .login-page .card input:focus,
+        .login-page .card select:focus {
+            border-color: var(--gold);
+        }
+
+        .login-page .card input::placeholder {
+            color: rgba(58,46,42,0.35);
+        }
+
+        .login-page .card button {
+            width: 100%;
+            padding: 13px;
+            margin-top: 16px;
+            background: var(--brown);
+            color: var(--gold);
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .login-page .card button:hover {
+            background: var(--gold);
+            color: var(--brown);
+        }
+
+        .login-page .card .switch-text {
+            font-size: 13px;
+            color: var(--brown-soft);
+            margin-top: 18px;
+            text-align: center;
+        }
+
+        .login-page .card .switch-text a {
+            color: var(--gold);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .login-page .card .switch-text a:hover {
+            text-decoration: underline;
+        }
+
+        .login-page .message {
+            font-size: 13px;
+            margin-top: 12px;
+            text-align: center;
+            min-height: 18px;
+        }
+
+        /* Divider between label and input group */
+        .input-label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--brown-soft);
+            margin-top: 14px;
+            margin-bottom: 3px;
+            font-weight: 500;
+        }
+
+        /* Quote on the overlay */
+        .login-quote {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            text-align: center;
+            color: rgba(245,240,232,0.45);
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 15px;
+            font-style: italic;
+            white-space: nowrap;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Background layers -->
+<div class="login-bg"></div>
+<div class="login-overlay"></div>
+
+<!-- Top bar -->
+<div class="login-brand">
+    <a href="index.html" class="brand-name">StaySwift</a>
+    <a href="index.html" class="back-link">← Back to Home</a>
+</div>
+
+<!-- Centered form -->
+<div class="login-page">
+    <div class="container">
+
+        <!-- LOGIN CARD -->
+        <div class="card" id="loginCard">
+            <h2>Welcome back.</h2>
+            <p class="subtitle">Sign in to manage your bookings.</p>
+
+            <label class="input-label">Email</label>
+            <input type="email" id="loginEmail" placeholder="you@example.com">
+
+            <label class="input-label">Password</label>
+            <input type="password" id="loginPassword" placeholder="••••••••">
+
+            <button onclick="loginUser()">Login</button>
+            <p id="loginMsg" class="message" style="color:#a13b3b;"></p>
+
+            <p class="switch-text">Don't have an account? <a href="#" onclick="showSignup()">Sign up here</a></p>
+        </div>
+
+        <!-- SIGNUP CARD -->
+        <div class="card" id="signupCard" style="display:none;">
+            <h2>Create account.</h2>
+            <p class="subtitle">Book your stay in under a minute.</p>
+
+            <label class="input-label">Email</label>
+            <input type="email" id="signupEmail" placeholder="you@example.com">
+
+            <label class="input-label">Password</label>
+            <input type="password" id="signupPassword" placeholder="••••••••">
+
+            <label class="input-label">Role</label>
+            <select id="signupRole">
+                <option value="USER">USER</option>
+                <option value="ADMIN">ADMIN</option>
+            </select>
+
+            <button onclick="signupUser()">Create Account</button>
+            <p id="signupMsg" class="message"></p>
+
+            <p class="switch-text">Already have an account? <a href="#" onclick="showLogin()">Login here</a></p>
+        </div>
+
+    </div>
+</div>
+
+<!-- Bottom quote -->
+<p class="login-quote">Comfortable stays, simple booking.</p>
+
+<script src="script.js"></script>
+</body>
+</html>

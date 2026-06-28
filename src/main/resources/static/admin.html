@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StaySwift - Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --cream: #F5F0E8;
+            --brown: #3A2E2A;
+            --brown-soft: rgba(58, 46, 42, 0.7);
+            --gold: #C8A878;
+        }
+
+        body { min-height: 100vh; position: relative; }
+
+        .admin-bg {
+            position: fixed;
+            inset: 0;
+            background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=2400&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            z-index: 0;
+        }
+
+        .admin-bg-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(245, 240, 232, 0.92);
+            z-index: 1;
+        }
+
+        .navbar, .admin-wrapper { position: relative; z-index: 2; }
+
+        /* Tabs */
+        .admin-tabs {
+            display: flex;
+            max-width: 1100px;
+            margin: 32px auto 0;
+            padding: 0 20px;
+            border-bottom: 2px solid rgba(58,46,42,0.12);
+        }
+
+        .tab-btn {
+            padding: 13px 32px;
+            background: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--brown-soft);
+            cursor: pointer;
+            transition: color 0.2s, border-color 0.2s;
+        }
+
+        .tab-btn:hover { color: var(--brown); }
+        .tab-btn.active { color: var(--brown); border-bottom: 3px solid var(--gold); }
+
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+
+        .admin-wrapper {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 32px 20px 60px;
+        }
+
+        .section-heading {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            color: var(--brown);
+            margin: 0 0 6px;
+        }
+
+        .section-sub { font-size: 13px; color: var(--brown-soft); margin: 0 0 24px; }
+
+        /* Add room card */
+        .add-room-card {
+            background: #fff;
+            border: 1px solid rgba(58,46,42,0.1);
+            padding: 32px 36px;
+            max-width: 520px;
+            margin-bottom: 48px;
+            box-shadow: 0 4px 20px rgba(58,46,42,0.06);
+        }
+
+        .add-room-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            color: var(--brown);
+            margin: 0 0 20px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--brown-soft);
+            margin-bottom: 5px;
+            margin-top: 14px;
+            font-weight: 500;
+        }
+
+        .add-room-card input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid rgba(58,46,42,0.18);
+            background: var(--cream);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: var(--brown);
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .add-room-card input:focus { border-color: var(--gold); }
+
+        .add-room-card button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 12px;
+            background: var(--brown);
+            color: var(--gold);
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: 0.25s;
+        }
+
+        .add-room-card button:hover { background: var(--gold); color: var(--brown); }
+
+        .add-room-msg { font-size: 13px; margin-top: 12px; min-height: 18px; }
+
+        /* Room cards */
+        .rooms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .room-card {
+            background: #fff;
+            border: 1px solid rgba(58,46,42,0.08);
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(58,46,42,0.05);
+        }
+
+        .room-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 22px;
+            color: var(--brown);
+            margin: 0 0 8px;
+        }
+
+        .room-card p { font-size: 14px; color: var(--brown-soft); margin: 4px 0; }
+
+        .room-card .price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            color: var(--brown);
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .room-card .stock {
+            color: #3f7d3f;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Booking filters */
+        .booking-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 22px;
+            border: 1px solid rgba(58,46,42,0.2);
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--brown-soft);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .filter-btn:hover { background: var(--cream); color: var(--brown); }
+        .filter-btn.active { background: var(--brown); color: var(--gold); border-color: var(--brown); }
+
+        /* Booking cards */
+        .bookings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .booking-card {
+            background: #fff;
+            border: 1px solid rgba(58,46,42,0.08);
+            padding: 22px 24px;
+            box-shadow: 0 4px 16px rgba(58,46,42,0.05);
+        }
+
+        .booking-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 20px;
+            color: var(--brown);
+            margin: 0 0 10px;
+        }
+
+        .booking-card p { font-size: 13px; color: var(--brown-soft); margin: 4px 0; }
+
+        .booking-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 3px 10px;
+            margin-bottom: 10px;
+        }
+
+        .badge-upcoming  { background: #eaf4ea; color: #3f7d3f; }
+        .badge-past      { background: #f0f0f0; color: #888; }
+        .badge-cancelled { background: #fbeaea; color: #a13b3b; }
+
+        .status-confirmed { color: #3f7d3f; font-weight: 700; text-transform: uppercase; font-size: 11px; }
+        .status-cancelled { color: #a13b3b; font-weight: 700; text-transform: uppercase; font-size: 11px; }
+        .status-past      { color: #888;    font-weight: 700; text-transform: uppercase; font-size: 11px; }
+
+        .delete-btn {
+            width: 100%;
+            margin-top: 14px;
+            padding: 10px;
+            background: #a13b3b;
+            color: #fff;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            transition: 0.2s;
+        }
+
+        .delete-btn:hover { background: #7d2c2c; }
+
+        .no-data {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--brown-soft);
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-bg"></div>
+<div class="admin-bg-overlay"></div>
+
+<nav class="navbar">
+    <a href="admin.html" class="brand">StaySwift Admin</a>
+    <div class="nav-links">
+        <span id="navLinks"></span>
+    </div>
+</nav>
+
+<div class="admin-wrapper">
+
+    <div class="admin-tabs">
+        <button class="tab-btn active" onclick="switchTab('bookings', this)">All Bookings</button>
+        <button class="tab-btn" onclick="switchTab('rooms', this)">Manage Rooms</button>
+    </div>
+
+    <!-- ══ BOOKINGS TAB ══ -->
+    <div id="tab-bookings" class="tab-panel active">
+        <br>
+        <h2 class="section-heading">All Bookings</h2>
+        <p class="section-sub">View and manage guest reservations. Past bookings cannot be cancelled.</p>
+
+        <div class="booking-filters">
+            <button class="filter-btn active" onclick="filterBookings('all', this)">All</button>
+            <button class="filter-btn" onclick="filterBookings('upcoming', this)">Upcoming</button>
+            <button class="filter-btn" onclick="filterBookings('past', this)">Past</button>
+            <button class="filter-btn" onclick="filterBookings('cancelled', this)">Cancelled</button>
+        </div>
+
+        <div id="adminBookingsList" class="bookings-grid"></div>
+    </div>
+
+    <!-- ══ ROOMS TAB ══ -->
+    <div id="tab-rooms" class="tab-panel">
+        <br>
+        <h2 class="section-heading">Manage Rooms</h2>
+        <p class="section-sub">Add new room types and view current inventory.</p>
+
+        <div class="add-room-card">
+            <h3>Add New Room</h3>
+            <label class="input-label">Room Type</label>
+            <input type="text" id="roomType" placeholder="e.g. Deluxe Suite">
+            <label class="input-label">Description</label>
+            <input type="text" id="roomDescription" placeholder="Short description of the room">
+            <label class="input-label">Price Per Night (₹)</label>
+            <input type="number" id="roomPrice" placeholder="e.g. 3500">
+            <label class="input-label">Total Rooms (Quantity)</label>
+            <input type="number" id="roomQuantity" placeholder="e.g. 10">
+            <button onclick="addRoom()">Add Room</button>
+            <p id="addRoomMsg" class="add-room-msg"></p>
+        </div>
+
+        <h3 style="font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--brown);margin:0 0 16px;">Current Inventory</h3>
+        <div id="adminRoomsList" class="rooms-grid"></div>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+<script>
+    // All bookings stored here after fetch
+    let allBookingsData = [];
+    let currentFilter = 'all';
+
+    // Tab switching
+    function switchTab(name, btn) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('tab-' + name).classList.add('active');
+        btn.classList.add('active');
+    }
+
+    // Filter bookings by type
+    function filterBookings(type, btn) {
+        currentFilter = type;
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderBookings();
+    }
+
+    // Render based on current filter
+    function renderBookings() {
+        const list = document.getElementById('adminBookingsList');
+        const today = new Date().toISOString().split('T')[0];
+
+        let filtered = allBookingsData;
+
+        if (currentFilter === 'upcoming') {
+            filtered = allBookingsData.filter(b => b.checkInDate >= today && b.status === 'CONFIRMED');
+        } else if (currentFilter === 'past') {
+            filtered = allBookingsData.filter(b => b.checkOutDate < today);
+        } else if (currentFilter === 'cancelled') {
+            filtered = allBookingsData.filter(b => b.status === 'CANCELLED');
+        }
+
+        list.innerHTML = '';
+
+        if (filtered.length === 0) {
+            list.innerHTML = '<p class="no-data">No bookings found.</p>';
+            return;
+        }
+
+        filtered.forEach(booking => {
+            const isPast      = booking.checkOutDate < today;
+            const isCancelled = booking.status === 'CANCELLED';
+            const isUpcoming  = !isPast && !isCancelled;
+
+            const badgeClass  = isCancelled ? 'badge-cancelled' : isPast ? 'badge-past' : 'badge-upcoming';
+            const badgeText   = isCancelled ? 'Cancelled' : isPast ? 'Past' : 'Upcoming';
+            const statusClass = isCancelled ? 'status-cancelled' : isPast ? 'status-past' : 'status-confirmed';
+            const statusText  = isCancelled ? 'Cancelled' : isPast ? 'Completed' : 'Confirmed';
+
+            // Only upcoming confirmed bookings can be cancelled
+            const cancelBtn = isUpcoming
+                ? `<button class="delete-btn" onclick="adminCancelBooking(${booking.id})">Cancel Booking</button>`
+                : '';
+
+            list.innerHTML += `
+                <div class="booking-card">
+                    <span class="booking-badge ${badgeClass}">${badgeText}</span>
+                    <h3>${booking.room.roomType}</h3>
+                    <p>Booked by: <strong>${booking.email}</strong></p>
+                    <p>Check-In: ${booking.checkInDate}</p>
+                    <p>Check-Out: ${booking.checkOutDate}</p>
+                    <p>Total: ₹${booking.totalAmount}</p>
+                    <p class="${statusClass}" style="margin-top:8px;">${statusText}</p>
+                    ${cancelBtn}
+                </div>
+            `;
+        });
+    }
+
+    // Fetch all bookings and store in allBookingsData, then render
+    async function fetchAndRenderBookings() {
+        const token = localStorage.getItem('token');
+        try {
+            const response = await fetch("http://localhost:8080/admin/bookings", {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            allBookingsData = await response.json();
+            renderBookings();
+        } catch (err) {
+            console.log('Error loading bookings', err);
+        }
+    }
+
+    // After adminCancelBooking (from script.js) runs, re-fetch so UI updates
+    const _origAdminCancel = adminCancelBooking;
+    async function adminCancelBooking(bookingId) {
+        const token = localStorage.getItem('token');
+        if (!confirm('Are you sure you want to cancel this booking?')) return;
+        try {
+            const response = await fetch("http://localhost:8080/admin/bookings/" + bookingId + "/cancel", {
+                method: 'PUT',
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (response.ok) {
+                alert('Booking cancelled successfully.');
+                fetchAndRenderBookings();
+            } else {
+                const data = await response.text();
+                alert(data);
+            }
+        } catch (err) {
+            alert('Something went wrong.');
+        }
+    }
+
+    // On page load
+    fetchAndRenderBookings();
+</script>
+</body>
+</html>
